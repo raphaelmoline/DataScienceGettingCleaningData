@@ -23,3 +23,26 @@ length(zipcodes[zipcodes==21231])
 
 dtUrl <- "https://d396qusza40orc.cloudfront.net/getdata%2Fdata%2Fss06pid.csv"
 download.file(dtUrl , destfile = "survey.csv", method="curl")
+
+DT <- fread("survey.csv")
+t <- proc.time()
+mean(DT$pwgtp15,by=DT$SEX)
+print(proc.time()-t)
+
+t <- proc.time()
+DT[,mean(pwgtp15),by=SEX]
+print(proc.time()-t)
+
+t <- proc.time()
+tapply(DT$pwgtp15,DT$SEX,mean)
+print(proc.time()-t)
+
+t <- proc.time()
+mean(DT[DT$SEX==1,]$pwgtp15); mean(DT[DT$SEX==2,]$pwgtp15)
+print(proc.time()-t)
+
+t <- proc.time()
+sapply(split(DT$pwgtp15,DT$SEX),mean)
+print(proc.time()-t)
+
+
