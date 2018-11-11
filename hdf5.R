@@ -16,3 +16,9 @@ h5ls("example.h5")
 
 df = data.frame(1L:5L,seq(0,1,length.out=5),c("ab","cde","fghi","a","s"), stringAsFactors=FALSE)
 h5write(df,"example.h5","df")
+
+readA = h5read("example.h5", "foo/A")
+readA
+
+h5write(c(12,13,14),"example.h5", "foo/A", index=list(1:3,1))
+h5read("example.h5", "foo/A")
