@@ -26,3 +26,5 @@ close(con)
 htmlCode
 nchar(htmlCode[c(10,20,30,100)])
 
+dat <- read.fwf(file = "quizzdata.for", widths = c(14,5,6,7,6,7,6,7,6), skip =4)
+sum(dat[,4])

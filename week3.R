@@ -55,4 +55,26 @@ all(colSums(is.na(restData)) == 0) # is there any NA?
 
 #values with specific characteristics
 table(restData$zipCode %in% c("21212","21213"))
+restData[restData$zipCode %in% c("21212","21213"),]
 
+# cross tabs, not done here
+
+#objet size
+print(object.size(restData),units="Mb")
+
+
+### creating new variables missingness, curring up (factor quantitatives), transforms
+
+#creating sequences
+s1 <- seq(1,10,by=2)
+s1
+s2 <- seq(1,10,length=3)
+s2
+x2 <- c(1,3,8,25,100)
+seq(along= x2)
+
+restData$nearMe = restData$neighborhood %in% c("Roland Park", "Homeland")
+table(restData$nearMe)
+
+restData$zipWrong = ifelse(restData$zipCode <0, TRUE, FALSE)
+table(restData$zipWrong,restData$zipCode < 0)
