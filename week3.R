@@ -73,8 +73,69 @@ s2
 x2 <- c(1,3,8,25,100)
 seq(along= x2)
 
+#creating binary variables
 restData$nearMe = restData$neighborhood %in% c("Roland Park", "Homeland")
 table(restData$nearMe)
 
 restData$zipWrong = ifelse(restData$zipCode <0, TRUE, FALSE)
 table(restData$zipWrong,restData$zipCode < 0)
+
+#creating categorical variables
+restData$zipGroups = cut(restData$zipCode, breaks=quantile(restData$zipCode))
+table(restData$zipGroups)
+table(restData$zipGroups,restData$zipCode)
+
+#Easier utting
+library(Hmisc)
+restData$zipGroups = cut2(restData$zipCode, g=4)
+table(restData$zipGroups)
+
+# creating factor variable
+restData$zcf <- factor(restData$zipCode)
+restData$zcf[1:10]
+class(restData$zcf)
+
+#levels of facroe variables
+yesno <- sample(c("yes","no"),size=10, replace = TRUE)
+yesnofac = factor(yesno,levels=c("yes","no"))
+relevel(yesnofac, ref="yes")
+as.numeric(yesnofac)
+
+#using the mutate function
+restData2 = mutate(restData,zipGroups=cut2(zipCode,g=4))
+
+##reshaping data
+library(reshape2)
+head(mtcars)
+mtcars$carname <- rownames(mtcars)
+head(mtcars)
+carMelt <- melt(mtcars,id=c("carname", "gear","cyl"),measure.vars = c("mpg","hp"))
+head(carMelt)
+tail(carMelt)
+
+# casting data frames
+cylData <- dcast(carMelt, cyl ~ variable)
+cylData
+
+cylData <- dcast(carMelt, cyl ~ variable,mean)
+cylData
+
+#averaging values
+head(InsectSprays)
+tapply(InsectSprays$count,InsectSprays$spray,sum)
+
+#split functions
+spIns = split(InsectSprays$count, InsectSprays$spray)
+spIns # output is a list
+
+sprCount = lapply(spIns,sum)
+sprCount
+unlist(sprCount)
+sapply(spIns, sum)
+
+#using plyr package
+ddply(InsectSprays,.(spray),summarize,sum=sum(count)) # not working
+
+
+spraySums <- ddply(InsectSprays,.(spray),summarize,sum=ave(count,FUN=sum))
+
