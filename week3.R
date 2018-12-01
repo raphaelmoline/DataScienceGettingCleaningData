@@ -135,7 +135,43 @@ sapply(spIns, sum)
 
 #using plyr package
 ddply(InsectSprays,.(spray),summarize,sum=sum(count)) # not working
-
-
 spraySums <- ddply(InsectSprays,.(spray),summarize,sum=ave(count,FUN=sum))
+
+#using dplyr package
+library(dplyr)
+chicogo <- readRDS("chicago.rds")
+names(chicago)
+head(select(chicago, city:dptp)) # select range of columns
+head(select(chicago, -(city:dptp)))
+# alternative
+i <- match("city", names(chicago))
+j <- match("dptp", names(chicago))
+head(chicago[,-(i:j)])
+# filter on value
+chic.f <- filter(chicago, pm25tmean2 > 30)
+head(chic.f)
+chic.f <- filter(chicago, pm25tmean2 > 30 & tmpd > 80) # multiple filters
+#rearrange
+chicago <- arrange(chicago,date)
+head(chicago)
+chicago <- arrange(chicago,desc(date)) # descending order
+# rename
+chicago <- rename(chicago, pm25 = pm25tmean2, dewpoint = dptp)
+#mutate, new variables
+chicago <- mutate(chicago, pm25dtrend = pm25-mean(pm25,na.rm = TRUE))
+head(select(chicago, pm25, pm25dtrend))
+# group by: split
+chicago <- mutate(chicago, tempcat = factor(1 * (tmpd > 80), labels = c("cold", "hot")))
+hotcold <- group_by(chicago,tempcat)
+summarize(hotcold, pm25 = mean(pm25, na.rm = TRUE), o3 = max(o3tmean2), no2 = median(no2tmean2))
+chicago <- mutate(chicago, year = as.POSIXlt(date)$year + 1900)
+years <- group_by(chicago,year)
+summarize(years, pm25 = mean(pm25,na.rm=TRUE),  o3 = max(o3tmean2), no2 = median(no2tmean2))
+# pipeline operator,do not need to specify the data frame used
+chicago %>% mutate(month = as.POSIXlt(date)$mon + 1) %>% group_by(month) %>% summarize(pm25 = mean(pm25, na.rm= TRUE),o3 = max(o3tmean2), no2 = median(no2tmean2) )
+
+
+
+
+
 
